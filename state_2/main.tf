@@ -1,22 +1,9 @@
-terraform {
-  backend "s3" {
-    profile = "psl_dev"
-    bucket  = "aws-terraform-workshop"
-    key     = "terraform.tfstate"
-    region  = "us-east-1"
-    encrypt = true
+locals {
+  common_tags = {
+    project = "aws-terraform-workshop"
+    responsible = "stiven.agudeloo"
   }
 }
-
-provider "aws" {
-  region  = "${var.region}"  # variables can be injected from files, too
-  profile = "${var.profile}"
-}
-
-data "template_file" "userdata" {
-  template = "${file("userdata.sh")}"
-}
-
 resource "aws_security_group" "aws_terraform_workshop" {
   name        = "aws-terraform-workshop-sg"
   description = "Allow HTTP and SSH access"
@@ -43,9 +30,8 @@ resource "aws_security_group" "aws_terraform_workshop" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Project = "aws-terraform-workshop"
-  }
+  tags = common_tags
+
 }
 
 data "aws_ami" "latest_amazon_linux" {
@@ -59,17 +45,18 @@ data "aws_ami" "latest_amazon_linux" {
   owners = ["amazon"]
 }
 
-resource "aws_instance" "psl_workshop" {
+resource "aws_instance" "tf_workshop" {
   ami                    = "${data.aws_ami.latest_amazon_linux.id}"
   instance_type          = "${var.instance_type}"
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
   subnet_id              = "${var.subnet_id}"
   key_name               = "${var.key_name}"
-  user_data              = "${data.template_file.userdata.rendered}"
+  user_data              = templatefile("userdata.sh")
   count                  = "${var.instances}"
 
-  tags = {
-    "Name"    = "hello-from-be"
-    "Project" = "aws-terraform-workshop"
-  }
+  tags = merge(
+    {
+      Name = "hello-from-be"
+    },
+    common_tags)
 }
