@@ -1,10 +1,16 @@
-provider "aws" {
-  region  = "us-east-1"
-  profile = "psl_dev"
+terraform {
+  
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "3.58.0"
+    }
+  }
 }
 
-data "template_file" "userdata" {
-  template = "${file("userdata.sh")}" # a change here requires creating a new resource
+provider "aws" {
+  region  = "us-east-1"
+  profile = "tf_workshop"
 }
 
 resource "aws_security_group" "aws_terraform_workshop" {
@@ -33,7 +39,7 @@ resource "aws_security_group" "aws_terraform_workshop" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
+  tags = {
     Project = "aws-terraform-workshop"
   }
 }
@@ -44,10 +50,10 @@ resource "aws_instance" "aws_terraform_workshop" {
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
   subnet_id              = "subnet-b1455dec"                                   # us-east-1a
   key_name               = "aws-terraform-workshop"
-  user_data              = "${data.template_file.userdata.rendered}"           # mention provisioners
+  user_data              = templatefile("userdata.sh", {})
 
   tags = {
-    "Name"    = "hello-from-be"
-    "Project" = "aws-terraform-workshop"
+    Name    = "hello-from-be"
+    Project = "aws-terraform-workshop"
   }
 }
