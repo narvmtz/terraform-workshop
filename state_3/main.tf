@@ -1,12 +1,9 @@
-provider "aws" {
-  region  = "${var.region}"
-  profile = "${var.profile}"
+locals {
+  common_tags = {
+    project = "aws-terraform-workshop"
+    responsible = "stiven.agudeloo"
+  }
 }
-
-data "template_file" "userdata" {
-  template = "${file("templates/userdata.sh")}"
-}
-
 resource "aws_security_group" "aws_terraform_workshop_app_sg" {
   name        = "aws-terraform-workshop-app-sg"
   description = "Allow HTTP access"
@@ -26,9 +23,7 @@ resource "aws_security_group" "aws_terraform_workshop_app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Project = "aws-terraform-workshop"
-  }
+  tags = common_tags
 }
 
 resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
@@ -50,9 +45,7 @@ resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Project = "aws-terraform-workshop"
-  }
+  tags = common_tags
 }
 
 data "aws_ami" "latest_amazon_linux" {
@@ -72,7 +65,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
   security_groups = ["${aws_security_group.aws_terraform_workshop_app_sg.id}"]
-  user_data       = "${data.template_file.userdata.rendered}"
+  user_data       = templatefile("templates/userdata.sh", {})
 
   lifecycle {
     create_before_destroy = true
@@ -98,6 +91,8 @@ resource "aws_elb" "elb" {
     target              = "TCP:${var.app_port}"
     interval            = 30
   }
+
+  tags = common_tags
 }
 
 resource "aws_autoscaling_group" "asg" {
@@ -119,5 +114,15 @@ resource "aws_autoscaling_group" "asg" {
       value               = "aws-terraform-workshop-asg"
       propagate_at_launch = true
     },
+    {
+      key = "project"
+      value = common_tags["project"]
+      propagate_at_launch = true
+    },
+    {
+      key = "responsible"
+      value = common_tags["responsible"]
+      propagate_at_launch = true
+    }
   ]
 }

@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    profile = "psl_dev"
-    bucket  = "aws-terraform-workshop"
-    key     = "terraform.tfstate"
+    profile = "${var.profile}"
+    bucket  = "ramp-up-devops-psl"
+    key     = "stiven.agudeloo/terraform.tfstate"
     region  = "us-east-1"
     encrypt = true
   }

@@ -5,7 +5,7 @@ variable "region" {
 
 variable "profile" {
   type    = "string"
-  default = "psl_dev"
+  default = "default"
 }
 
 variable vpc_id {

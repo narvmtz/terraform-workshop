@@ -8,6 +8,6 @@ An Auto scaling is a collection of EC2 instances with a purpose that could scale
 ## An ELB
 An Elastic Load Balancer give and endpoint and divide the requests among a group of resources
 [more info](https://aws.amazon.com/es/elasticloadbalancing/?whats-new-cards-elb.sort-by=item.additionalFields.postDateTime&whats-new-cards-elb.sort-order=desc)
-## Lists
-A List is a sequence of values.  
-[more info](https://www.terraform.io/docs/language/expressions/types.html#list)
+## Lists and Maps
+A List is a sequence of values and a map is a grup of values identified by a label.  
+[more info](https://www.terraform.io/docs/language/expressions/types.html)
