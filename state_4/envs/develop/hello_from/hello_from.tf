@@ -1,12 +1,11 @@
-module hello_from_develop {
+module "hello_from_develop" {
   source               = "../../../modules/hello_from"
-  region               = "us-east-1"
-  profile              = "psl_dev"
+  responsible          = "stiven.agudeloo"
   env                  = "develop"
-  vpc_id               = "vpc-953f78ee"
+  vpc_id               = "vpc-0d2831659ef89870c"
   app_port             = "5000"
-  subnets_list         = ["subnet-b1455dec", "subnet-f4841b8f"]
-  key_name             = "aws-terraform-workshop"
+  subnets_list         = ["subnet-0088df5de3a4fe490", "subnet-055c41fce697f9cca"]
+  key_name             = "terraform-workshop"
   elb_http_port        = "80"
   asg_max_size         = 2
   asg_min_size         = 1
