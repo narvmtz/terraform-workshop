@@ -1,34 +1,38 @@
 variable "region" {
-  type    = "string"
-  default = "us-east-1"
+  type    = string
+  default = "us-west-1"
 }
 
 variable "profile" {
-  type    = "string"
+  type    = string
   default = "default"
 }
 
-variable vpc_id {
-  type = "string"
+variable "responsible" {
+  type = string
 }
 
-variable app_port {
-  type = "string"
+variable "vpc_id" {
+  type = string
+}
+
+variable "app_port" {
+  type = string
 }
 
 variable "instance_type" {
-  type = "string"
+  type = string
 }
 
 variable "subnet_id" {
-  type = "string"
+  type = string
 }
 
 variable "key_name" {
-  type = "string"
+  type = string
 }
 
 variable instances {
-  type    = "string"
+  type    = string
   default = "1"
 }
