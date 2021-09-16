@@ -46,7 +46,7 @@ resource "aws_security_group" "aws_terraform_workshop" {
 }
 
 resource "aws_instance" "aws_terraform_workshop" {
-  ami                    = "ami-011996ff98de391d1"                             
+  ami                    = "ami-075463702effd3ea1"                             
   instance_type          = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
   subnet_id              = "subnet-0088df5de3a4fe490"                                   # us-west-1a
