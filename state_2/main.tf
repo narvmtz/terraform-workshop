@@ -1,7 +1,7 @@
 locals {
   common_tags = {
     project = "aws-terraform-workshop"
-    responsible = "stiven.agudeloo"
+    responsible = "${var.responsible}"
   }
 }
 resource "aws_security_group" "aws_terraform_workshop" {
@@ -30,7 +30,7 @@ resource "aws_security_group" "aws_terraform_workshop" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = common_tags
+  tags = local.common_tags
 
 }
 
@@ -39,7 +39,7 @@ data "aws_ami" "latest_amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["amzn-ami-hvm-*-gp2"]
+    values = ["amzn-ami-hvm-*-x86_64-gp2"]
   }
 
   owners = ["amazon"]
@@ -51,12 +51,18 @@ resource "aws_instance" "tf_workshop" {
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
   subnet_id              = "${var.subnet_id}"
   key_name               = "${var.key_name}"
-  user_data              = templatefile("userdata.sh")
+  user_data              = templatefile("userdata.sh", {})
   count                  = "${var.instances}"
 
   tags = merge(
     {
       Name = "hello-from-be"
     },
-    common_tags)
+    local.common_tags)
+
+  volume_tags = merge(
+    {
+      Name = "hello-from-be"
+    },
+    local.common_tags)
 }

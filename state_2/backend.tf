@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    profile = "${var.profile}"
+    profile = "tf_workshop"
     bucket  = "ramp-up-devops-psl"
     key     = "stiven.agudeloo/terraform.tfstate"
-    region  = "us-east-1"
+    region  = "us-west-1"
     encrypt = true
   }
 }
