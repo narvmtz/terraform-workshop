@@ -9,14 +9,14 @@ terraform {
 }
 
 provider "aws" {
-  region  = "us-east-1"
+  region  = "us-west-1"
   profile = "tf_workshop"
 }
 
 resource "aws_security_group" "aws_terraform_workshop" {
   name        = "aws-terraform-workshop-sg"
   description = "Allow HTTP and SSH access"
-  vpc_id      = "vpc-953f78ee"
+  vpc_id      = "vpc-0d2831659ef89870c"
 
   ingress {
     from_port   = 5000
@@ -40,20 +40,28 @@ resource "aws_security_group" "aws_terraform_workshop" {
   }
 
   tags = {
-    Project = "aws-terraform-workshop"
+    project = "aws-terraform-workshop"
+    responsible = "stiven.agudeloo"
   }
 }
 
 resource "aws_instance" "aws_terraform_workshop" {
-  ami                    = "ami-0ff8a91507f77f867"                             # amzn-ami-hvm-2018.03.0.20180811-x86_64-gp2
+  ami                    = "ami-011996ff98de391d1"                             
   instance_type          = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
-  subnet_id              = "subnet-b1455dec"                                   # us-east-1a
+  subnet_id              = "subnet-0088df5de3a4fe490"                                   # us-west-1a
   key_name               = "aws-terraform-workshop"
   user_data              = templatefile("userdata.sh", {})
 
   tags = {
     Name    = "hello-from-be"
-    Project = "aws-terraform-workshop"
+    project = "aws-terraform-workshop"
+    responsible = "stiven.agudeloo"
+  }
+
+  volume_tags = {
+    Name    = "hello-from-be"
+    project = "aws-terraform-workshop"
+    responsible = "stiven.agudeloo"
   }
 }
