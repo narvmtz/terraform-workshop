@@ -1,7 +1,7 @@
 locals {
   common_tags = {
     project = "aws-terraform-workshop"
-    responsible = "stiven.agudeloo"
+    responsible = var.responsible
   }
 }
 resource "aws_security_group" "aws_terraform_workshop_app_sg" {
@@ -23,7 +23,7 @@ resource "aws_security_group" "aws_terraform_workshop_app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = common_tags
+  tags = local.common_tags
 }
 
 resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
@@ -45,7 +45,7 @@ resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = common_tags
+  tags = local.common_tags
 }
 
 data "aws_ami" "latest_amazon_linux" {
@@ -74,7 +74,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 
 resource "aws_elb" "elb" {
   name            = "aws-terraform-workshop-elb"
-  subnets         = ["${var.subnets_list}"]
+  subnets         = var.subnets_list
   security_groups = ["${aws_security_group.aws_terraform_workshop_elb_sg.id}"]
 
   listener {
@@ -92,12 +92,12 @@ resource "aws_elb" "elb" {
     interval            = 30
   }
 
-  tags = common_tags
+  tags = local.common_tags
 }
 
 resource "aws_autoscaling_group" "asg" {
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
-  vpc_zone_identifier  = ["${var.subnets_list}"]
+  vpc_zone_identifier  = var.subnets_list
   max_size             = "${var.asg_max_size}"
   min_size             = "${var.asg_min_size}"
   desired_capacity     = "${var.asg_desired_capacity}"
@@ -116,12 +116,12 @@ resource "aws_autoscaling_group" "asg" {
     },
     {
       key = "project"
-      value = common_tags["project"]
+      value = local.common_tags["project"]
       propagate_at_launch = true
     },
     {
       key = "responsible"
-      value = common_tags["responsible"]
+      value = local.common_tags["responsible"]
       propagate_at_launch = true
     }
   ]
