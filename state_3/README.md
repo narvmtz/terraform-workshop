@@ -8,6 +8,15 @@ An Auto scaling is a collection of EC2 instances with a purpose that could scale
 ## An ELB
 An Elastic Load Balancer give and endpoint and divide the requests among a group of resources
 [more info](https://aws.amazon.com/es/elasticloadbalancing/?whats-new-cards-elb.sort-by=item.additionalFields.postDateTime&whats-new-cards-elb.sort-order=desc)
+## Variables
+Variables works as a parameter of terraform configuration.  
+[more info](https://www.terraform.io/docs/language/values/variables.html)
+## Variables file
+This is a file with `.tfvars` extention where you can set the value of the declared variables
+[more info](https://www.terraform.io/docs/language/values/variables.html#assigning-values-to-root-module-variables)
+## Output values
+Output values are like return parameter.  
+[more info](https://www.terraform.io/docs/language/values/outputs.html)
 ## Lists and Maps
 A List is a sequence of values and a map is a grup of values identified by a label.  
 [more info](https://www.terraform.io/docs/language/expressions/types.html)
