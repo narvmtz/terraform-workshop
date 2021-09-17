@@ -20,59 +20,35 @@ aws configure
 - Clone this repository
 - (Optional) install and use [Landscape](https://github.com/coinbase/terraform-landscape)
 
-## State 1
-### Features
-- An EC2 instance
-- A security group
-- User data
-- Local tfstate
-### Concepts :pencil2:
+## [State 1](./state_1/README.md#state-1)
 - HCL
 - Provider
 - Resource
-- State
 - Init
 - Plan
 - Apply
+- EC2 instance
+- Security group
+- State
+- Local tfstate
 - Destroy
+- User data
 
-## State 2
-### Features
-- Remote backend :grin:
-- Variables
-- Outputs
-### Concepts :pencil2:
-- Variables
-- Outputs
+## [State 2](./state_2/README.md#state-2)
+- Remote backend
+- Data source
+- Local Values
 - Count
 
-
-```
-terraform plan -var 'vpc_id=vpc-953f78ee' -var 'app_port=5000' -var 'instance_type=t2.micro' -var 'subnet_id=subnet-b1455dec' -var 'key_name=aws-terraform-workshop'
-```
-
-```
-terraform plan -var 'vpc_id=vpc-953f78ee' -var 'app_port=5000' -var 'instance_type=t2.micro' -var 'subnet_id=subnet-b1455dec' -var 'key_name=aws-terraform-workshop' -var 'instances=2'
-```
-
-## State 3
-### Features
+## [State 3](./state_3/README.md#state-3)
 - A launch configuration
 - An autoscaling group
 - An ELB
-
-This is the definitive infrastructure
-### Concepts :pencil2:
+- Variables
 - Variables file
-- Lists
+- Output values
+- Lists and Maps
 
-```
-terraform plan -var-file=myvars.tfvars
-```
-## State 4
-### Features
-- "Environments"
-
-### Concepts :pencil2:
+## [State 4](./state_4/README.md#state-4)
+- Environments
 - Modules
-- _ifs_ (interpolation)
