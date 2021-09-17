@@ -12,6 +12,6 @@ instance_type = "t2.micro"
 
 subnet_id = "subnet-0088df5de3a4fe490"
 
-key_name = "aws-terraform-workshop"
+key_name = "terraform-workshop"
 
 instances = 2

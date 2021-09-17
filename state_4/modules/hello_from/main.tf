@@ -1,14 +1,12 @@
-provider "aws" {
-  region  = "${var.region}"
-  profile = "${var.profile}"
+locals {
+  common_tags = {
+    project = "terraform-workshop"
+    responsible = var.responsible
+  }
+  ec2_instance_type = "${var.env == "develop" ? "t2.micro" : "t2.small"}"
 }
-
-data "template_file" "userdata" {
-  template = "${file("${path.module}/templates/userdata.sh")}"
-}
-
-resource "aws_security_group" "aws_terraform_workshop_app_sg" {
-  name        = "aws-terraform-workshop-app-sg"
+resource "aws_security_group" "terraform_workshop_app_sg" {
+  name        = "terraform-workshop-app-sg-${var.env}"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
 
@@ -26,13 +24,11 @@ resource "aws_security_group" "aws_terraform_workshop_app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Project = "aws-terraform-workshop"
-  }
+  tags = local.common_tags
 }
 
-resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
-  name        = "aws-terraform-workshop-elb-sg"
+resource "aws_security_group" "terraform_workshop_elb_sg" {
+  name        = "terraform-workshop-elb-sg-${var.env}"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
 
@@ -50,9 +46,7 @@ resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
-    Project = "aws-terraform-workshop"
-  }
+  tags = local.common_tags
 }
 
 data "aws_ami" "latest_amazon_linux" {
@@ -66,17 +60,13 @@ data "aws_ami" "latest_amazon_linux" {
   owners = ["amazon"]
 }
 
-locals {
-  ec2_instance_type = "${var.env == "develop" ? "t2.micro" : "m3.medium"}"
-}
-
 resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix     = "aws-terraform-workshop-${local.ec2_instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
+  name_prefix     = "terraform-workshop-${var.env}-${local.ec2_instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
   image_id        = "${data.aws_ami.latest_amazon_linux.id}"
   instance_type   = "${local.ec2_instance_type}"
   key_name        = "${var.key_name}"
-  security_groups = ["${aws_security_group.aws_terraform_workshop_app_sg.id}"]
-  user_data       = "${data.template_file.userdata.rendered}"
+  security_groups = ["${aws_security_group.terraform_workshop_app_sg.id}"]
+  user_data       = templatefile("${path.module}/templates/userdata.sh", {})
 
   lifecycle {
     create_before_destroy = true
@@ -84,9 +74,9 @@ resource "aws_launch_configuration" "launch_configuration" {
 }
 
 resource "aws_elb" "elb" {
-  name            = "aws-terraform-workshop-elb"
-  subnets         = ["${var.subnets_list}"]
-  security_groups = ["${aws_security_group.aws_terraform_workshop_elb_sg.id}"]
+  name            = "terraform-workshop-elb-${var.env}"
+  subnets         = var.subnets_list
+  security_groups = ["${aws_security_group.terraform_workshop_elb_sg.id}"]
 
   listener {
     instance_port     = "${var.app_port}"
@@ -102,11 +92,13 @@ resource "aws_elb" "elb" {
     target              = "TCP:${var.app_port}"
     interval            = 30
   }
+
+  tags = local.common_tags
 }
 
 resource "aws_autoscaling_group" "asg" {
   launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
-  vpc_zone_identifier  = ["${var.subnets_list}"]
+  vpc_zone_identifier  = var.subnets_list
   max_size             = "${var.asg_max_size}"
   min_size             = "${var.asg_min_size}"
   desired_capacity     = "${var.asg_desired_capacity}"
@@ -120,8 +112,18 @@ resource "aws_autoscaling_group" "asg" {
   tags = [
     {
       key                 = "Name"
-      value               = "aws-terraform-workshop-asg"
+      value               = "terraform-workshop-asg-${var.env}"
       propagate_at_launch = true
     },
+    {
+      key = "project"
+      value = local.common_tags["project"]
+      propagate_at_launch = true
+    },
+    {
+      key = "responsible"
+      value = local.common_tags["responsible"]
+      propagate_at_launch = true
+    }
   ]
 }

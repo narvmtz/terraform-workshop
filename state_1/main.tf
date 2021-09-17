@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 resource "aws_security_group" "aws_terraform_workshop" {
-  name        = "aws-terraform-workshop-sg"
+  name        = "terraform-workshop-sg"
   description = "Allow HTTP and SSH access"
   vpc_id      = "vpc-0d2831659ef89870c"
 
@@ -40,7 +40,7 @@ resource "aws_security_group" "aws_terraform_workshop" {
   }
 
   tags = {
-    project = "aws-terraform-workshop"
+    project = "terraform-workshop"
     responsible = "stiven.agudeloo"
   }
 }
@@ -50,18 +50,18 @@ resource "aws_instance" "aws_terraform_workshop" {
   instance_type          = "t2.micro"
   vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
   subnet_id              = "subnet-0088df5de3a4fe490"                                   # us-west-1a
-  key_name               = "aws-terraform-workshop"
+  key_name               = "terraform-workshop"
   user_data              = templatefile("userdata.sh", {})
 
   tags = {
     Name    = "hello-from-be"
-    project = "aws-terraform-workshop"
+    project = "terraform-workshop"
     responsible = "stiven.agudeloo"
   }
 
   volume_tags = {
     Name    = "hello-from-be"
-    project = "aws-terraform-workshop"
+    project = "terraform-workshop"
     responsible = "stiven.agudeloo"
   }
 }

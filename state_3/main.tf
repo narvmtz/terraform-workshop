@@ -1,11 +1,11 @@
 locals {
   common_tags = {
-    project = "aws-terraform-workshop"
+    project = "terraform-workshop"
     responsible = var.responsible
   }
 }
 resource "aws_security_group" "aws_terraform_workshop_app_sg" {
-  name        = "aws-terraform-workshop-app-sg"
+  name        = "terraform-workshop-app-sg"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
 
@@ -27,7 +27,7 @@ resource "aws_security_group" "aws_terraform_workshop_app_sg" {
 }
 
 resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
-  name        = "aws-terraform-workshop-elb-sg"
+  name        = "terraform-workshop-elb-sg"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
 
@@ -60,7 +60,7 @@ data "aws_ami" "latest_amazon_linux" {
 }
 
 resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix     = "aws-terraform-workshop-${var.instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
+  name_prefix     = "terraform-workshop-${var.instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
   image_id        = "${data.aws_ami.latest_amazon_linux.id}"
   instance_type   = "${var.instance_type}"
   key_name        = "${var.key_name}"
@@ -73,7 +73,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 }
 
 resource "aws_elb" "elb" {
-  name            = "aws-terraform-workshop-elb"
+  name            = "terraform-workshop-elb"
   subnets         = var.subnets_list
   security_groups = ["${aws_security_group.aws_terraform_workshop_elb_sg.id}"]
 
@@ -111,7 +111,7 @@ resource "aws_autoscaling_group" "asg" {
   tags = [
     {
       key                 = "Name"
-      value               = "aws-terraform-workshop-asg"
+      value               = "terraform-workshop-asg"
       propagate_at_launch = true
     },
     {

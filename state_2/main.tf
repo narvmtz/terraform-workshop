@@ -1,11 +1,11 @@
 locals {
   common_tags = {
-    project = "aws-terraform-workshop"
+    project = "terraform-workshop"
     responsible = "${var.responsible}"
   }
 }
 resource "aws_security_group" "aws_terraform_workshop" {
-  name        = "aws-terraform-workshop-sg"
+  name        = "terraform-workshop-sg"
   description = "Allow HTTP and SSH access"
   vpc_id      = "${var.vpc_id}"
 
