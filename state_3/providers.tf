@@ -9,6 +9,6 @@ terraform {
 }
 
 provider "aws" {
-  region  = "${var.region}"  # variables can be injected from files, too
-  profile = "${var.profile}"
+  region  = var.region  # variables can be injected from files, too
+  profile = var.profile
 }

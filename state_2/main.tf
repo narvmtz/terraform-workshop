@@ -1,17 +1,17 @@
 locals {
   common_tags = {
     project = "terraform-workshop"
-    responsible = "${var.responsible}"
+    responsible = var.responsible
   }
 }
 resource "aws_security_group" "aws_terraform_workshop" {
   name        = "terraform-workshop-sg"
   description = "Allow HTTP and SSH access"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = "${var.app_port}"
-    to_port     = "${var.app_port}"
+    from_port   = var.app_port
+    to_port     = var.app_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -46,13 +46,13 @@ data "aws_ami" "latest_amazon_linux" {
 }
 
 resource "aws_instance" "tf_workshop" {
-  ami                    = "${data.aws_ami.latest_amazon_linux.id}"
-  instance_type          = "${var.instance_type}"
-  vpc_security_group_ids = ["${aws_security_group.aws_terraform_workshop.id}"]
-  subnet_id              = "${var.subnet_id}"
-  key_name               = "${var.key_name}"
+  ami                    = data.aws_ami.latest_amazon_linux.id
+  instance_type          = var.instance_type
+  vpc_security_group_ids = [aws_security_group.aws_terraform_workshop.id]
+  subnet_id              = var.subnet_id
+  key_name               = var.key_name
   user_data              = templatefile("userdata.sh", {})
-  count                  = "${var.instances}"
+  count                  = var.instances
 
   tags = merge(
     {

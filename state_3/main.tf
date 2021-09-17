@@ -61,10 +61,10 @@ data "aws_ami" "latest_amazon_linux" {
 
 resource "aws_launch_configuration" "launch_configuration" {
   name_prefix     = "terraform-workshop-${var.instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
-  image_id        = "${data.aws_ami.latest_amazon_linux.id}"
-  instance_type   = "${var.instance_type}"
-  key_name        = "${var.key_name}"
-  security_groups = ["${aws_security_group.aws_terraform_workshop_app_sg.id}"]
+  image_id        = data.aws_ami.latest_amazon_linux.id
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.aws_terraform_workshop_app_sg.id]
   user_data       = templatefile("templates/userdata.sh", {})
 
   lifecycle {
@@ -75,12 +75,12 @@ resource "aws_launch_configuration" "launch_configuration" {
 resource "aws_elb" "elb" {
   name            = "terraform-workshop-elb"
   subnets         = var.subnets_list
-  security_groups = ["${aws_security_group.aws_terraform_workshop_elb_sg.id}"]
+  security_groups = [aws_security_group.aws_terraform_workshop_elb_sg.id]
 
   listener {
-    instance_port     = "${var.app_port}"
+    instance_port     = var.app_port
     instance_protocol = "tcp"
-    lb_port           = "${var.elb_http_port}"
+    lb_port           = var.elb_http_port
     lb_protocol       = "tcp"
   }
 
@@ -96,12 +96,12 @@ resource "aws_elb" "elb" {
 }
 
 resource "aws_autoscaling_group" "asg" {
-  launch_configuration = "${aws_launch_configuration.launch_configuration.name}"
+  launch_configuration = aws_launch_configuration.launch_configuration.name
   vpc_zone_identifier  = var.subnets_list
-  max_size             = "${var.asg_max_size}"
-  min_size             = "${var.asg_min_size}"
-  desired_capacity     = "${var.asg_desired_capacity}"
-  load_balancers       = ["${aws_elb.elb.name}"]
+  max_size             = var.asg_max_size
+  min_size             = var.asg_min_size
+  desired_capacity     = var.asg_desired_capacity
+  load_balancers       = [aws_elb.elb.name]
   health_check_type    = "EC2"
 
   lifecycle {
