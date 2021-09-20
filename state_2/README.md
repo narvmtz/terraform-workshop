@@ -1,4 +1,6 @@
 # State 2
+## Infrastructure
+![Infrastructure State 2](../images/state_2.svg)
 ## Remote backend
 Remote backend store terraform state, this confing is usefull for teams.  
 [more info](https://www.terraform.io/docs/language/settings/backends/remote.html)

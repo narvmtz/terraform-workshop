@@ -1,4 +1,6 @@
 # State 1
+## Infrastructure
+![Infrastructure State 1](../images/state_1.svg)
 ## HCL
 Hashicorp configuration language is the native Terraform sixtax, it was develop to be easier for human reading.  
 [more info](https://www.terraform.io/docs/language/syntax/configuration.html)

@@ -1,4 +1,6 @@
 # State 3
+## Infrastructure
+![Infrastructure State 3](../images/state_3.svg)
 ## A launch configuration
 Launche configuration is a templante that is used to lauch new instances with EC2 or Auto scaling group.  
 [more info](https://docs.aws.amazon.com/autoscaling/ec2/userguide/LaunchConfiguration.html)

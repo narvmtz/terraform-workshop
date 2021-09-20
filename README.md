@@ -4,7 +4,8 @@ Examples about Infrastructure as Code, using [Terraform](https://www.terraform.i
 
 Sample application: [Hello From](https://github.com/facevedom/hello-from)
 
-![Infrastructure diagram](Infrastructure.png)
+## Infrastructure
+![Infrastructure State 3](./images/state_4.svg)
 
 ## Getting Started
 ### Set up your local environment

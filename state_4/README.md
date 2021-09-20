@@ -1,4 +1,6 @@
 # State 4
+## Infrastructure
+![Infrastructure State 3](../images/state_3.svg)
 ## Environments
 Them help to divide diferent copies of our infrastructure, it is usefull to have different terraform state for development and production environment. 
 ## Modules
