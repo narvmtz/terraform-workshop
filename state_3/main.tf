@@ -4,7 +4,7 @@ locals {
     responsible = var.responsible
   }
 }
-resource "aws_security_group" "aws_terraform_workshop_app_sg" {
+resource "aws_security_group" "terraform_workshop_app_sg" {
   name        = "terraform-workshop-app-sg"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
@@ -26,7 +26,7 @@ resource "aws_security_group" "aws_terraform_workshop_app_sg" {
   tags = local.common_tags
 }
 
-resource "aws_security_group" "aws_terraform_workshop_elb_sg" {
+resource "aws_security_group" "terraform_workshop_elb_sg" {
   name        = "terraform-workshop-elb-sg"
   description = "Allow HTTP access"
   vpc_id      = "${var.vpc_id}"
@@ -64,7 +64,7 @@ resource "aws_launch_configuration" "launch_configuration" {
   image_id        = data.aws_ami.latest_amazon_linux.id
   instance_type   = var.instance_type
   key_name        = var.key_name
-  security_groups = [aws_security_group.aws_terraform_workshop_app_sg.id]
+  security_groups = [aws_security_group.terraform_workshop_app_sg.id]
   user_data       = templatefile("templates/userdata.sh", {})
 
   lifecycle {
@@ -75,7 +75,7 @@ resource "aws_launch_configuration" "launch_configuration" {
 resource "aws_elb" "elb" {
   name            = "terraform-workshop-elb"
   subnets         = var.subnets_list
-  security_groups = [aws_security_group.aws_terraform_workshop_elb_sg.id]
+  security_groups = [aws_security_group.terraform_workshop_elb_sg.id]
 
   listener {
     instance_port     = var.app_port
