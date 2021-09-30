@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    profile = "tf_workshop"
-    bucket  = "ramp-up-devops-psl"
-    key     = "stiven.agudeloo/terraform.tfstate"
+    profile = "default"
+    bucket  = "wwc-testing-bucket"
+    /* key */
     region  = "us-west-1"
     encrypt = true
   }

@@ -59,54 +59,16 @@ data "aws_ami" "latest_amazon_linux" {
   owners = ["amazon"]
 }
 
-resource "aws_launch_configuration" "launch_configuration" {
-  name_prefix     = "terraform-workshop-${var.instance_type}-${data.aws_ami.latest_amazon_linux.id}-"
-  image_id        = data.aws_ami.latest_amazon_linux.id
-  instance_type   = var.instance_type
-  key_name        = var.key_name
-  security_groups = [aws_security_group.terraform_workshop_app_sg.id]
-  user_data       = templatefile("templates/userdata.sh", {})
-
-  lifecycle {
-    create_before_destroy = true
-  }
+resource "" "name" {
+  /* Launch configuration */
 }
 
-resource "aws_elb" "elb" {
-  name            = "terraform-workshop-elb"
-  subnets         = var.subnets_list
-  security_groups = [aws_security_group.terraform_workshop_elb_sg.id]
-
-  listener {
-    instance_port     = var.app_port
-    instance_protocol = "tcp"
-    lb_port           = var.elb_http_port
-    lb_protocol       = "tcp"
-  }
-
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 5
-    target              = "TCP:${var.app_port}"
-    interval            = 30
-  }
-
-  tags = local.common_tags
+resource "" "name" {
+  /* AWS Elastic load balancer */
 }
 
-resource "aws_autoscaling_group" "asg" {
-  launch_configuration = aws_launch_configuration.launch_configuration.name
-  vpc_zone_identifier  = var.subnets_list
-  max_size             = var.asg_max_size
-  min_size             = var.asg_min_size
-  desired_capacity     = var.asg_desired_capacity
-  load_balancers       = [aws_elb.elb.name]
-  health_check_type    = "EC2"
-
-  lifecycle {
-    create_before_destroy = true
-  }
+resource "" "name" {
+  /* Autoscaling group */
 
   tags = [
     {

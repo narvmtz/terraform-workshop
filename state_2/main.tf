@@ -1,7 +1,6 @@
 locals {
   common_tags = {
-    project = "terraform-workshop"
-    responsible = "stiven.agudeloo"
+    /* Tags */
   }
 }
 resource "aws_security_group" "terraform_workshop" {
@@ -54,15 +53,7 @@ resource "aws_instance" "tf_workshop" {
   user_data              = templatefile("userdata.sh", {})
   count                  = 2
 
-  tags = merge(
-    {
-      Name = "hello-from-be"
-    },
-    local.common_tags)
+  tags = /* Combinar common_tags con un tag Name="hello-from-be" */
 
-  volume_tags = merge(
-    {
-      Name = "hello-from-be"
-    },
-    local.common_tags)
+  volume_tags = /* Combinar common_tags con un tag Name="hello-from-be" */
 }
