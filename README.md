@@ -21,7 +21,7 @@ aws configure
 - Clone this repository
 - (Optional) install and use [Landscape](https://github.com/coinbase/terraform-landscape)
 
-## [State 1](./state_1/README.md#state-1)
+## [State 1](./state_1)
 - HCL
 - Provider
 - Resource
@@ -35,13 +35,13 @@ aws configure
 - Destroy
 - User data
 
-## [State 2](./state_2/README.md#state-2)
+## [State 2](./state_2)
 - Remote backend
 - Data source
 - Local Values
 - Count
 
-## [State 3](./state_3/README.md#state-3)
+## [State 3](./state_3)
 - A launch configuration
 - An autoscaling group
 - An ELB
@@ -50,6 +50,6 @@ aws configure
 - Output values
 - Lists and Maps
 
-## [State 4](./state_4/README.md#state-4)
+## [State 4](./state_4)
 - Environments
 - Modules
