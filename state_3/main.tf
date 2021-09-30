@@ -7,11 +7,11 @@ locals {
 resource "aws_security_group" "terraform_workshop_app_sg" {
   name        = "terraform-workshop-app-sg"
   description = "Allow HTTP access"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = "${var.app_port}"
-    to_port     = "${var.app_port}"
+    from_port   = var.app_port
+    to_port     = var.app_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
