@@ -15,14 +15,19 @@ provider "aws" {
 }
 
 resource "aws_security_group" "terraform_workshop" {
-  name        = "terraform-workshop-sg"
+  name        = "terraform-workshop-sg-nar"
   description = "Allow HTTP and SSH access"
   vpc_id      = "vpc-e7c66f81"
 
   /* 
   Regla de ingreso para la aplcicacion que corre en el puerto
    */
-
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
     from_port   = 22
     to_port     = 22
@@ -40,27 +45,30 @@ resource "aws_security_group" "terraform_workshop" {
   /* 
   Tags necesarios para el depliegue
   */
+  tags = {responsible = "narvmtz@gmail.com"}
   
 }
 
 resource "aws_instance" "terraform_workshop" {
   ami                    = "ami-075463702effd3ea1"                             
   instance_type          = "t2.micro"
-  key_name               = "terraform-workshop"
+  # key_name               = "terraform-workshop"
   subnet_id              = "subnet-40b0041a"                                   # us-west-1a
   /*
   Security group
   */
+  vpc_security_group_ids = [aws_security_group.terraform_workshop.id]
 
   /* 
   Userdata
   */
-
+  user_data = templatefile("userdata.sh", {})
   /* 
   Tags necesarios para el depliegue
   */
-
+  tags = {responsible = "narvmtz@gmail.com"}
   /* 
   Tags del volumen necesarios para el depliegue
   */
+  volume_tags = {responsible = "narvmtz@gmail.com"}
 }
