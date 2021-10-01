@@ -1,10 +1,11 @@
 locals {
   common_tags = {
     /* Tags */
+    responsible = "narvmtz@gmail.com"
   }
 }
 resource "aws_security_group" "terraform_workshop" {
-  name        = "terraform-workshop-sg"
+  name        = "terraform-workshop-sg-nar-2"
   description = "Allow HTTP and SSH access"
   vpc_id      = "vpc-e7c66f81"
 
@@ -49,11 +50,11 @@ resource "aws_instance" "tf_workshop" {
   instance_type          = "t2.micro"
   vpc_security_group_ids = [aws_security_group.terraform_workshop.id]
   subnet_id              = "subnet-40b0041a"
-  key_name               = "terraform-workshop"
+  # key_name               = "terraform-workshop"
   user_data              = templatefile("userdata.sh", {})
   count                  = 2
 
-  tags = /* Combinar common_tags con un tag Name="hello-from-be" */
+  tags = merge({Name="hello-from-be"}, local.common_tags) /* Combinar common_tags con un tag Name="hello-from-be" */
 
-  volume_tags = /* Combinar common_tags con un tag Name="hello-from-be" */
+  volume_tags = merge({Name="hello-from-be"}, local.common_tags)/* Combinar common_tags con un tag Name="hello-from-be" */
 }
