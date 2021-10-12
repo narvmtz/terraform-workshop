@@ -4,8 +4,8 @@ locals {
     responsible = "${var.responsible}"
   }
 }
-resource "aws_security_group" "app-sg-nar" {
-  name_prefix = "terraform-workshop-"
+resource "aws_security_group" "terraform_workshop_app_sg" {
+  name        = "terraform-workshop-app-sg"
   description = "Allow HTTP access"
   vpc_id      = var.vpc_id
 
@@ -26,14 +26,14 @@ resource "aws_security_group" "app-sg-nar" {
   tags = local.common_tags
 }
 
-resource "aws_security_group" "terraform_workshop_sg" {
-  name        = "terraform-workshop-sg-nar"
+resource "aws_security_group" "terraform_workshop_elb_sg" {
+  name        = "terraform-workshop-elb-sg"
   description = "Allow HTTP access"
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = var.app_port
-    to_port     = var.app_port
+    from_port   = var.elb_http_port
+    to_port     = var.elb_http_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -61,56 +61,38 @@ data "aws_ami" "latest_amazon_linux" {
 
 resource "aws_launch_configuration" "launch_configuration" {
   /* Launch configuration */
-  name                    = "terraform_workshop_launch_configuration_sg-nar"
+  name                    = "terraform_workshop_launch_configuration_sg-nv"
   image_id                = data.aws_ami.latest_amazon_linux.id
   instance_type           = var.instance_type
+  security_groups         = [aws_security_group.terraform_workshop_app_sg.id]
   user_data               = templatefile("templates/userdata.sh", {})
 
   lifecycle {
     create_before_destroy = true
   }
 }
-# resource "aws_elb" "terraform-elb" {
-#   name               = "terraform-elb"
-#   security_groups    = [aws_security_group.terraform_workshop_sg.id]
-#   subnets            = var.subnets_list
 
-#   listener {
-#     instance_port     = var.app_port
-#     instance_protocol = "http"
-#     lb_port           = var.elb_http_port
-#     lb_protocol       = "http"
-#   }
-
-#   health_check {
-#     healthy_threshold   = 2
-#     unhealthy_threshold = 2
-#     timeout             = 3
-#     target              = "HTTP:${var.app_port}/"
-#     interval            = 30
-#   }
-
-#   tags = local.common_tags
-  
-# }
-resource "aws_lb" "elb" {
-  /* AWS Elastic load balancer */
-  name               = "elb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.terraform_workshop_sg.id]
+resource "aws_elb" "terraform-elb" {
+  name               = "terraform-elb-nv"
+  security_groups    = [aws_security_group.terraform_workshop_elb_sg.id]
   subnets            = var.subnets_list
-
-  enable_deletion_protection = true
-
-  access_logs {
-    bucket  = "wwc-testing-bucket/nar_.tfstate"
-    enabled = true
+  
+  listener {
+    instance_port     = var.app_port
+    instance_protocol = "http"
+    lb_port           = var.elb_http_port
+    lb_protocol       = "http"
   }
 
-  tags = {
-    Environment = "prod"
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "HTTP:${var.app_port}/"
+    interval            = 30
   }
+
+  tags = local.common_tags
 }
 
 resource "aws_autoscaling_group" "sg-nar" {
@@ -122,11 +104,12 @@ resource "aws_autoscaling_group" "sg-nar" {
   force_delete              = true
   vpc_zone_identifier       = var.subnets_list
   launch_configuration      = aws_launch_configuration.launch_configuration.name
+  load_balancers            = [aws_elb.terraform-elb.id]
 
   tags = [
     {
       key                 = "Name"
-      value               = "terraform-workshop-asg"
+      value               = "terraform-workshop-asg_nv"
       propagate_at_launch = true
     },
     {

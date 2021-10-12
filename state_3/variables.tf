@@ -40,9 +40,9 @@ variable "subnets_list" {
   default = [ "subnet-40b0041a", "subnet-cb4bd3ad" ]
 }
 
-variable "key_name" {
-  type = string
-}
+# variable "key_name" {
+#   type = string
+# }
 
 variable "elb_http_port" {
   description = "elastic load balancer port"
@@ -59,7 +59,7 @@ variable "asg_max_size" {
 variable "asg_min_size" {
   description = "min size autoscaling group"
   type = string
-  default = "2"
+  default = "1"
 }
 
 variable "asg_desired_capacity" {
